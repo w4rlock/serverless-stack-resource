@@ -1,9 +1,9 @@
 const BaseServerlessPlugin = require('base-serverless-plugin');
 
-const LOG_PREFFIX = '[ServerlessPlugin] -';
+const LOG_PREFFIX = '[ServerlessStackResource] -';
 const USR_CONF = 'pluginConfig';
 
-class ServerlessPlugin extends BaseServerlessPlugin {
+class ServerlessStackResource extends BaseServerlessPlugin {
   /**
    * Default Constructor
    *
@@ -12,11 +12,13 @@ class ServerlessPlugin extends BaseServerlessPlugin {
    */
   constructor(serverless, options) {
     super(serverless, options, LOG_PREFFIX, USR_CONF);
+    this.provider = serverless.getProvider('aws');
 
     this.hooks = {
+      'before:deploy:deploy': this.dispatchAction.bind(this, this.deploy),
       'after:deploy:deploy': this.dispatchAction.bind(this, this.deploy),
-      'after:info:info': this.dispatchAction.bind(this, this.info),
       'after:remove:remove': this.dispatchAction.bind(this, this.remove),
+      'after:info:info': this.dispatchAction.bind(this, this.info),
     };
   }
 
@@ -25,14 +27,14 @@ class ServerlessPlugin extends BaseServerlessPlugin {
    *
    * @param {function} funAction serverless plugin action
    */
-  async dispatchAction(funAction, varResolver = undefined) {
+  async dispatchAction(funAction) {
     if (this.isPluginDisabled()) {
       this.log('warning: plugin is disabled');
       return '';
     }
 
     this.loadConfig();
-    return funAction.call(this, varResolver);
+    return funAction.call(this);
   }
 
   /**
@@ -68,6 +70,32 @@ class ServerlessPlugin extends BaseServerlessPlugin {
   async remove() {
     this.log('Removing...');
   }
+
+  /**
+   * describeStack
+   *
+   * @param {string} stackName
+   */
+  describeStack(stackName) {
+    this.provider.request('CloudFormation', 'describeStacks', {
+      StackName: stackName,
+    });
+  }
+
+
+  createStack() {
+    this.provider.request('CloudFormation', 'createStack', { });
+  }
+
+
+  updateStack() {
+    this.provider.request('CloudFormation', 'updateStack', { });
+  }
+
+
+  deleteStack() {
+    this.provider.request('CloudFormation', 'deleteStack', { });
+  }
 }
 
-module.exports = ServerlessPlugin;
+module.exports = ServerlessStackResource;

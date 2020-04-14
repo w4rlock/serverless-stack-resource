@@ -1,7 +1,7 @@
 {
-  "name": "template-base-serverless-plugin",
-  "version": "0.2.0",
-  "description": "",
+  "name": "serverless stack resource",
+  "version": "0.0.0",
+  "description": "Serverless stack resource",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -16,7 +16,7 @@
     "release:major": "npm run release -- --release-as major",
     "release:minor": "npm run release -- --release-as minor",
     "release:patch": "npm run release -- --release-as patch",
-    "unpublish": "npx force-unpublish template-base-serverless-plugin 'npmrc remove module'"
+    "unpublish": "npx force-unpublish serverless stack resource 'npmrc remove module'"
   },
   "husky": {
     "hooks": {
@@ -24,7 +24,7 @@
       "pre-commit": "npm run lint"
     }
   },
-  "author": "",
+  "author": "w4rlock",
   "license": "ISC",
   "dependencies": {
     "base-serverless-plugin": "0.1.1",
